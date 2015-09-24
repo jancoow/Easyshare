@@ -19,7 +19,15 @@
 			$file = fopen($randomname."/index.php", "w");
 			fwrite($file, "<?php header('Location: ".$_POST['url']."'); ?>");
 			fclose($file);
-		}else if(isset($_FILES['file'])){															//FILE
+		}else if(isset($_POST['code']) && $_POST['code'] != ""){								//CODE
+			mkdir($randomname);
+			$file = fopen($randomname."/index.html", "w");
+			$code = $_POST['code'];
+			$code = str_replace('<', '&lt;', $code);
+			$code = str_replace('>', '&gt;', $code);
+			fwrite($file, '<html><head><script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script></head><body><pre class="prettyprint">'.$code.'</pre></body></html>');
+			fclose($file);					
+		}else if(isset($_FILES['file'])){														//FILE
 			mkdir($randomname);
 			move_uploaded_file($_FILES['file']['tmp_name'], $randomname."/".$randomname);
 			$ex = getExtension($_FILES['file']['name']);
@@ -29,13 +37,12 @@
 				fwrite($file, '<img src='.$randomname.' />');
 			}else if(in_array($ex, $video)){													//VIDEO
 				fwrite($file, ' <video width="320" height="240" controls><source src="'.$randomname.'" type="video/'.$ex.'">Browser ondersteund dit niet.</video>');
-			}else if(in_array($ex, $music)){
+			}else if(in_array($ex, $music)){													//MUSIC
 				fwrite($file, '<audio controls><source src="'.$randomname.'" type="audio/'.$ex.'">Browser ondersteund dit niet.</audio>');
 			}else{
 				$name = $randomname.".".$ex;													//other file
 				fwrite($file,"<?php header('Content-Type: application/octet-stream'); header(\"Content-Transfer-Encoding: Binary\"); header(\"Content-disposition: attachment; filename=$name\"); readfile(\"$randomname\"); ?>");
 			}	
-			
 			fclose($file);			
 		}
 		
@@ -58,6 +65,7 @@
 		<form method="post" enctype="multipart/form-data" action="">
 			URL: <input placeholder="URL" type="url" name="url" /> <br />
 			Or upload file: <input name="file" type="file" /> <br />
+			Or code			<textarea name="code" ></textarea>  <br />			
 			<input class="btn btn-default" name="Submit" type="submit" value="upload">
 		</form>
 	</body>
