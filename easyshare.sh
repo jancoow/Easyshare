@@ -7,16 +7,25 @@
 clip=$(xclip -sel clip -o)
 url="url of remote server here"
 
+# Check if it is a nautilus copy command
+if [[ $clip =~ "x-special/nautilus-clipboard" ]]; then
+	echo "Nautilus copy"
+	clip=$(xclip -sel clip -o | tail -n +3)
+	clip=${clip:7}
+fi
+
 regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]' 
 if [[ $clip =~ $regex ]] && [[ ! $clip =~ "\n" ]]
 then
+  echo "Post as URL"
   curl -d url="$clip" -d plain="" $url | xclip -selection clipboard
 else
-    echo "Not a link, file maybe?"
     if [ -f "${clip}" ]; then
+         echo "Post as file"
        	 curl -F file=@"$clip" -F plain="" $url | xclip -selection clipboard
     else
-		echo "Nope, not a url and file :(. I will post it as text"
-        curl -d code="${clip}" -d plain="" $url | xclip -selection clipboard
+        echo "Post as snippet"
+        curl -d snippet="${clip}" -d plain="" $url | xclip -selection clipboard
     fi
 fi
+
