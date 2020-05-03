@@ -5,7 +5,7 @@
 
 
 clip=$(xclip -sel clip -o)
-url="url of remote server here"
+url="https://site.com/uploader.php?API_KEY=foo&plain=true"
 
 # Check if it is a nautilus copy command
 if [[ $clip =~ "x-special/nautilus-clipboard" ]]; then

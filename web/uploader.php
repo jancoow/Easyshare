@@ -31,7 +31,11 @@ function saveType($dir, $type){
 }
 
 function returnUrl($dir_name, $base_url){
-	die(json_encode(array("success" => true, "url" => $base_url . $dir_name. "/")));
+	if(isset($_GET["plain"])){
+		die($base_url . $dir_name. "/");
+	}else{
+		die(json_encode(array("success" => true, "url" => $base_url . $dir_name. "/")));
+	}
 }
 
 $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://".$_SERVER['HTTP_HOST'].dirname($_SERVER['REQUEST_URI']);
