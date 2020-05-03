@@ -186,8 +186,8 @@
                     <textarea name="snippet" placeholder="Type or paste your snippet here" type="textarea"></textarea>
                     <div class="checkboxRow">
                       <div class="checkbox">
-                         <input type="checkbox" checked name="format" value="1"/>
-                         <label for="metadata">Pretty print</label>
+                         <input type="checkbox" name="raw" value="1"/>
+                         <label for="metadata">Raw</label>
                       </div>
                     </div>
                 </div>

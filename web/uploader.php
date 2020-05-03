@@ -30,7 +30,12 @@ function saveType($dir, $type){
    touch($dir.'/.type.'.$type);
 }
 
+function returnUrl($dir_name, $base_url){
+	die(json_encode(array("success" => true, "url" => $base_url . $dir_name. "/")));
+}
+
 $base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://".$_SERVER['HTTP_HOST'].dirname($_SERVER['REQUEST_URI']);
+chdir("files");
 $dir_name = substr(md5(uniqid(mt_rand(), true)), 0, 5);
 
 if($_SERVER['REQUEST_METHOD'] == "POST"){
@@ -104,7 +109,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                 </html>
             ');
             fclose($file);
-            die(json_encode(array("success" => true, "url" => $base_url . $dir_name)));
+						returnUrl($dir_name, $base_url);
         }else if(strstr(mime_content_type($_FILES['file']['tmp_name']), "video/")){
                    saveType($dir_name, 'video');
            move_uploaded_file($_FILES['file']['tmp_name'], $dir_name . "/" . $file_name);
@@ -125,7 +130,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                 </html>
             ');
             fclose($file);
-            die(json_encode(array("success" => true, "url" => $base_url . $dir_name)));	
+						returnUrl($dir_name, $base_url);
         }else{
             // Upload other file
            saveType($dir_name, 'file');
@@ -142,7 +147,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                 ?>
             ");
             fclose($file);
-            die(json_encode(array("success" => true, "url" => $base_url . $dir_name)));
+						returnUrl($dir_name, $base_url);
         }
     }elseif (!empty($_POST['snippet']) && filter_var($_POST['snippet'], FILTER_VALIDATE_URL)) {
         //Upload redirect url
@@ -156,7 +161,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             ?>
         ");
         fclose($file);
-        die(json_encode(array("success" => true, "url" => $base_url . $dir_name)));
+				returnUrl($dir_name, $base_url);
     }else if (!empty($_POST['snippet'])) {
         //Upload snippet
         saveType($dir_name, 'snippet');
@@ -166,16 +171,15 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         $input = str_replace('<', '&lt;', $input);
         $input = str_replace('>', '&gt;', $input);
 
-        if($_POST['format'] == 1){
+        if($_POST['raw'] == 0){
             fwrite($file, '
                 <html>
                     <head>
-                    <link rel="stylesheet"
-                        href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/styles/darcula.min.css">
-                    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
+		                  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/styles/darcula.min.css">
+		                  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.17.1/build/highlight.min.js"></script>
                     </head>
                     <body style="background: #2b2b2b;">
-                        <pre><code>' . $input . '</code></pre>
+                        <pre><code id="code">' . $input . '</code></pre>
                         <script>hljs.initHighlightingOnLoad();</script>
                     </body>
                 </html>');
@@ -190,7 +194,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         }
 
         fclose($file);
-        die(json_encode(array("success" => true, "url" => $base_url . $dir_name)));
+        returnUrl($dir_name, $base_url);
     }else{
         rmdir($dir_name);
         die(json_encode(array("success" => false, "error" => "Could not determine type")));

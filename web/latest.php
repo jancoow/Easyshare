@@ -4,7 +4,7 @@
     $types = array();
 		$base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://".$_SERVER['HTTP_HOST'].dirname($_SERVER['REQUEST_URI']);
 
-
+		chdir("files");
     $files = scandir(".", SCANDIR_SORT_NONE);
     foreach($files as $dir){
         if(is_dir($dir) && $dir != "." && $dir != "..") {
@@ -25,7 +25,7 @@
             }
 
             array_push($types[$file_type], array(
-                "url" => "<a target=\"_blank\" href=\"".$base_url.$dir."\">".$dir."</a>",
+                "url" => "<a target=\"_blank\" href=\"".$base_url.$dir."/\">".$dir."</a>",
                 "time" => filemtime($dir)
             ));
         }
@@ -75,6 +75,7 @@
 </style>
 </header>
 <body style="background: #2b2b2b; color:#fff; margin-right:50px;">
+<h1>Latest</h1>
 
 <?php
 	foreach ($types as $key => $value) {

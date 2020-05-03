@@ -14,9 +14,9 @@ EXPOSE 80
 COPY [ "config/apache2.conf", "/etc/apache2/apache2.conf" ]
 COPY [ "config/000-default.conf", "/etc/apache2/sites-available/000-default.conf" ]
 
-
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
 
 # Override with custom opcache settings
 COPY config/easyshare.ini $PHP_INI_DIR/conf.d/
@@ -26,3 +26,6 @@ RUN a2enmod rewrite
 
 COPY [ "web/", "/var/www/html/" ]
 
+# Set correct permissions for file dir
+RUN mkdir /var/www/html/files
+RUN chown -R www-data:www-data /var/www/html/
