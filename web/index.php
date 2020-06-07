@@ -1,3 +1,7 @@
+<?php 
+      require_once("authentication.php");
+?>
+
 <html>
     <head>
         <style>

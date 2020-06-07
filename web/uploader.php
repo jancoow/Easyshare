@@ -38,7 +38,7 @@ function returnUrl($dir_name, $base_url){
 	}
 }
 
-$base_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://".$_SERVER['HTTP_HOST'].dirname($_SERVER['REQUEST_URI']);
+$base_url = BASE_URL;
 chdir("files");
 $dir_name = substr(md5(uniqid(mt_rand(), true)), 0, 5);
 
