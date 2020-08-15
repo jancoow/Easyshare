@@ -68,7 +68,28 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 		          $img = new Imagick($_FILES['file']['tmp_name']);
 
 		          if($_POST["exifdata"]){
-		              $img->stripImage();
+					  
+					$exif = exif_read_data($_FILES['file']['tmp_name']);
+					$orientation = isset($exif['Orientation']) ? $exif['Orientation'] : null;
+
+
+					if (!empty($orientation)) {
+							switch ($orientation) {
+								case 3:
+									$img->rotateImage('#000000', 180);
+									break;
+
+								case 6:
+									$img->rotateImage('#000000', 90);
+									break;
+
+								case 8:
+									$img->rotateImage('#000000', -90);
+									break;
+							}
+					 }
+					 
+		             $img->stripImage();                          
 		          }
 		          if($_POST["compressImage"]){
 		              # Only scale if larger then full HD
@@ -142,14 +163,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             move_uploaded_file($_FILES['file']['tmp_name'], $dir_name . "/" . $file_name);
             $file = fopen($dir_name . "/index.php", "w");
             $name = $_FILES['file']['name'];
-            fwrite($file,"
-                <?php
+            fwrite($file,"<?php
                     header('Content-Type: application/octet-stream');
                     header('Content-Transfer-Encoding: Binary');
                     header('Content-disposition: attachment; filename=\"$file_name\"');
-                    readfile(\"$file_name\");
-                ?>
-            ");
+                    readfile(\"$file_name\"); ?>");
             fclose($file);
 						returnUrl($dir_name, $base_url);
         }
