@@ -121,14 +121,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                         <link rel="stylesheet" href="../iv-viewer.min.css">
                     </header>
                     <body style="margin: 0; background: #2b2b2b; color: #fff; overflow: hidden;">
-                        <div style="display: block; max-width: 100%; max-height: 100%;">
-                            <img style="max-width: 100%; max-height: 100%;" id="image" src=' . $file_name . ' />
-                        </div>
                     </body>
                     <footer>
                         <script>
-                            const image = document.getElementById("image");
-                            const viewer = new ImageViewer(image);
+													const viewer = new ImageViewer.FullScreenViewer();
+													viewer.show("' . $file_name . '");
                         </script>
                     </footer>
                 </html>
